@@ -77,7 +77,7 @@ func (controller *Controller) PublishAppToMarketplaceInternal(c *gin.Context) {
 			}
 			// publish AI-Agent
 			if !errors.Is(errInGetAIAgentActions, gorm.ErrRecordNotFound) {
-				marketplaceAPI := kozmomarketplacesdk.NewIllaMarketplaceRestAPI()
+				marketplaceAPI := kozmomarketplacesdk.NewKozmoMarketplaceRestAPI()
 				marketplaceAPI.OpenDebug()
 				for serial, aiAgentAction := range aiAgentActions {
 					fmt.Printf("[DUMP] aiAgentAction [%d]: %+v\n", serial, aiAgentAction)

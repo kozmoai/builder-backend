@@ -64,7 +64,7 @@ type Supervisor struct {
 func NewSupervisor() *Supervisor {
 	conf := config.GetInstance()
 	return &Supervisor{
-		API:       conf.GetIllaSupervisorInternalRestAPI(),
+		API:       conf.GetKozmoSupervisorInternalRestAPI(),
 		Validator: tokenvalidator.NewRequestTokenValidator(),
 	}
 }

@@ -32,15 +32,3 @@ Join KOZMO Community to share your ideas, suggestions or questions and connect w
 
 [![Chat on Discord](https://img.shields.io/badge/chat-Discord-7289DA?logo=discord)](https://discord.gg/kozmoai)
 
-## 🌱 Contributing
-
-Thinking about contributing? All kinds of contributions to KOZMO are greatly appreciated and welcomed! Check
-out [Contributing Guide](CONTRIBUTING.md) for details about how you can get involved.
-
-## 📖 Learn more
-
-Please visit [KOZMO Cloud](https://www.kozmoai.com/docs/about-illa).
-
-## License
-
-This project is [Apache License 2.0](LICENSE)

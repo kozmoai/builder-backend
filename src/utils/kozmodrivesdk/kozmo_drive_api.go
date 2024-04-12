@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/fatih/structs"
+	"github.com/go-resty/resty/v2"
 	"github.com/kozmoai/builder-backend/src/utils/config"
 	"github.com/kozmoai/builder-backend/src/utils/idconvertor"
 )

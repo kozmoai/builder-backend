@@ -36,7 +36,7 @@ type IllaMarketplaceRestAPI struct {
 	Debug     bool `json:"-"`
 }
 
-func NewIllaMarketplaceRestAPI() *IllaMarketplaceRestAPI {
+func NewKozmoMarketplaceRestAPI() *IllaMarketplaceRestAPI {
 	requestTokenValidator := tokenvalidator.NewRequestTokenValidator()
 	return &IllaMarketplaceRestAPI{
 		Config:    config.GetInstance(),
@@ -60,7 +60,7 @@ func (r *IllaMarketplaceRestAPI) ForkCounter(productType string, productID int) 
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Request-Token", r.Validator.GenerateValidateToken(fmt.Sprintf("%d", productID))).
-		Post(r.Config.IllaMarketplaceInternalRestAPI + fmt.Sprintf(FORK_COUNTER_API, productType, productID))
+		Post(r.Config.KozmoMarketplaceInternalRestAPI + fmt.Sprintf(FORK_COUNTER_API, productType, productID))
 	if r.Debug {
 		log.Printf("[IllaMarketplaceRestAPI.ForkCounter()]  response: %+v, err: %+v", resp, err)
 	}
@@ -81,7 +81,7 @@ func (r *IllaMarketplaceRestAPI) DeleteTeamAllProducts(teamID int) error {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Request-Token", r.Validator.GenerateValidateToken(fmt.Sprintf("%d", teamID))).
-		Delete(r.Config.IllaMarketplaceInternalRestAPI + fmt.Sprintf(DELETE_TEAM_ALL_PRODUCTS, teamID))
+		Delete(r.Config.KozmoMarketplaceInternalRestAPI + fmt.Sprintf(DELETE_TEAM_ALL_PRODUCTS, teamID))
 	if r.Debug {
 		log.Printf("[IllaMarketplaceRestAPI.DeleteTeamAllProducts()]  response: %+v, err: %+v", resp, err)
 	}
@@ -102,7 +102,7 @@ func (r *IllaMarketplaceRestAPI) DeleteProduct(productType string, productID int
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Request-Token", r.Validator.GenerateValidateToken(fmt.Sprintf("%d", productID))).
-		Delete(r.Config.IllaMarketplaceInternalRestAPI + fmt.Sprintf(DELETE_PRODUCT, productType, productID))
+		Delete(r.Config.KozmoMarketplaceInternalRestAPI + fmt.Sprintf(DELETE_PRODUCT, productType, productID))
 	if r.Debug {
 		log.Printf("[IllaMarketplaceRestAPI.DeleteProduct()]  response: %+v, err: %+v", resp, err)
 	}
@@ -129,7 +129,7 @@ func (r *IllaMarketplaceRestAPI) UpdateProduct(productType string, productID int
 	resp, err := client.R().
 		SetHeader("Request-Token", r.Validator.GenerateValidateToken(fmt.Sprintf("%d", productID), string(b))).
 		SetBody(product).
-		Put(r.Config.IllaMarketplaceInternalRestAPI + fmt.Sprintf(UPDATE_PRODUCTS, productType, productID))
+		Put(r.Config.KozmoMarketplaceInternalRestAPI + fmt.Sprintf(UPDATE_PRODUCTS, productType, productID))
 	log.Printf("[IllaMarketplaceRestAPI.UpdateProduct()]  response: %+v, err: %+v", resp, err)
 	if r.Debug {
 		log.Printf("[IllaMarketplaceRestAPI.UpdateProduct()]  response: %+v, err: %+v", resp, err)
@@ -150,7 +150,7 @@ func (r *IllaMarketplaceRestAPI) PublishAIAgentToMarketplace(aiAgentID int, team
 	}
 	client := resty.New()
 	tokenValidator := tokenvalidator.NewRequestTokenValidator()
-	uri := r.Config.IllaMarketplaceInternalRestAPI + fmt.Sprintf(PUBLISH_AI_AGENT_TO_MARKETPLACE_INTERNAL_API, teamID, aiAgentID, userID)
+	uri := r.Config.KozmoMarketplaceInternalRestAPI + fmt.Sprintf(PUBLISH_AI_AGENT_TO_MARKETPLACE_INTERNAL_API, teamID, aiAgentID, userID)
 	resp, errInPatch := client.R().
 		SetHeader("Request-Token", tokenValidator.GenerateValidateToken(strconv.Itoa(teamID), strconv.Itoa(aiAgentID), strconv.Itoa(userID))).
 		Post(uri)

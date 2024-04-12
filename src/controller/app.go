@@ -158,7 +158,7 @@ func (controller *Controller) DeleteApp(c *gin.Context) {
 	// add counter to marketpalce
 	go func() {
 		defer wg.Done()
-		marketplaceAPI := kozmomarketplacesdk.NewIllaMarketplaceRestAPI()
+		marketplaceAPI := kozmomarketplacesdk.NewKozmoMarketplaceRestAPI()
 		marketplaceAPI.OpenDebug()
 		errInDeleteProduct := marketplaceAPI.DeleteProduct(kozmomarketplacesdk.PRODUCT_TYPE_APPS, appID)
 		if errInDeleteProduct != nil {
@@ -911,7 +911,7 @@ func (controller *Controller) ReleaseApp(c *gin.Context) {
 
 	// if app already published to marketplace, sync app to marketplace
 	if app.IsPublishedToMarketplace() {
-		marketplaceAPI := kozmomarketplacesdk.NewIllaMarketplaceRestAPI()
+		marketplaceAPI := kozmomarketplacesdk.NewKozmoMarketplaceRestAPI()
 		marketplaceAPI.UpdateProduct(kozmomarketplacesdk.PRODUCT_TYPE_APPS, appID, kozmomarketplacesdk.NewAppForMarketplace(app))
 	}
 

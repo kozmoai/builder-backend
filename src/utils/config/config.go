@@ -81,7 +81,7 @@ type Config struct {
 	DriveUploadTimeoutRaw string `env:"KOZMO_DRIVE_UPLOAD_TIMEOUT" envDefault:"30s"`
 	DriveUploadTimeout    time.Duration
 	// supervisor API
-	IllaSupervisorInternalRestAPI string `env:"KOZMO_SUPERVISOR_INTERNAL_API" envDefault:"http://127.0.0.1:9001/api/v1"`
+	KozmoSupervisorInternalRestAPI string `env:"KOZMO_SUPERVISOR_INTERNAL_API" envDefault:"http://127.0.0.1:9001/api/v1"`
 
 	// peripheral API
 	KozmoPeripheralAPI string `env:"KOZMO_PERIPHERAL_API" envDefault:"https://peripheral-api.kozmoai.com/v1/"`
@@ -89,7 +89,7 @@ type Config struct {
 	kozmoResourceManagerRestAPI         string `env:"KOZMO_RESOURCE_MANAGER_API" envDefault:"http://kozmo-resource-manager-backend:8006"`
 	kozmoResourceManagerInternalRestAPI string `env:"KOZMO_RESOURCE_MANAGER_INTERNAL_API" envDefault:"http://kozmo-resource-manager-backend-internal:9004"`
 	// kozmo marketplace config
-	IllaMarketplaceInternalRestAPI string `env:"KOZMO_MARKETPLACE_INTERNAL_API" envDefault:"http://kozmo-marketplace-backend-internal:9003/api/v1"`
+	KozmoMarketplaceInternalRestAPI string `env:"KOZMO_MARKETPLACE_INTERNAL_API" envDefault:"http://kozmo-marketplace-backend-internal:9003/api/v1"`
 	// token for internal api
 	ControlToken string `env:"KOZMO_CONTROL_TOKEN" envDefault:""`
 	// google config
@@ -283,8 +283,8 @@ func (c *Config) GetControlToken() string {
 	return c.ControlToken
 }
 
-func (c *Config) GetIllaSupervisorInternalRestAPI() string {
-	return c.IllaSupervisorInternalRestAPI
+func (c *Config) GetKozmoSupervisorInternalRestAPI() string {
+	return c.KozmoSupervisorInternalRestAPI
 }
 
 func (c *Config) GetKozmoPeripheralAPI() string {
@@ -299,8 +299,8 @@ func (c *Config) GetkozmoResourceManagerInternalRestAPI() string {
 	return c.kozmoResourceManagerInternalRestAPI
 }
 
-func (c *Config) GetIllaMarketplaceInternalRestAPI() string {
-	return c.IllaMarketplaceInternalRestAPI
+func (c *Config) GetKozmoMarketplaceInternalRestAPI() string {
+	return c.KozmoMarketplaceInternalRestAPI
 }
 
 func (c *Config) GetKozmoGoogleSheetsClientID() string {
