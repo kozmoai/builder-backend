@@ -1,0 +1,105 @@
+name: Deploy to k8s
+
+on:
+  workflow_dispatch: # Allows manual triggering
+#  push:
+#    branches:
+#      - main
+#      - beta
+#      - develop
+
+env:
+  DO_CLUSTER: ${{ secrets.DO_CLUSTER }}
+  DOCKER_LOGIN: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_PWD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+jobs:
+  build:
+    name: Build server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build application Docker image
+        run: |
+          docker build --cache-from=kozmo-builder-backend -f kozmo-builder-backend.dockerfile -t kozmo-builder-backend .
+
+      - name: Push application Docker image
+        run: |
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PWD
+          docker tag kozmo-builder-backend "kozmoai/kozmo-builder-backend:${GITHUB_REF_NAME}"
+          docker push "kozmoai/kozmo-builder-backend:${GITHUB_REF_NAME}"
+
+  build-ws:
+    name: Build ws server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build application Docker image
+        run: |
+          docker build --cache-from=kozmo-builder-backend-ws -f kozmo-builder-backend-websocket.dockerfile -t kozmo-builder-backend-ws .
+
+      - name: Push application Docker image
+        run: |
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PWD
+          docker tag kozmo-builder-backend-ws "kozmoai/kozmo-builder-backend-ws:${GITHUB_REF_NAME}"
+          docker push "kozmoai/kozmo-builder-backend-ws:${GITHUB_REF_NAME}"
+
+  build-internal:
+    name: Build internal server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build application Docker image
+        run: |
+          docker build --cache-from=kozmo-builder-backend-internal -f kozmo-builder-backend-internal.dockerfile -t kozmo-builder-backend-internal .
+
+      - name: Push application Docker image
+        run: |
+          docker login -u $DOCKER_LOGIN -p $DOCKER_PWD
+          docker tag kozmo-builder-backend-internal "kozmoai/kozmo-builder-backend-internal:${GITHUB_REF_NAME}"
+          docker push "kozmoai/kozmo-builder-backend-internal:${GITHUB_REF_NAME}"
+
+  deploy:
+    name: 'Deploy'
+    needs: [build, build-ws, build-internal]
+    runs-on: ubuntu-latest
+    environment:
+      name:
+        ${{ (github.ref == 'refs/heads/main') && 'production' || (github.ref ==
+        'refs/heads/develop') && 'test' || (github.ref == 'refs/heads/beta') &&
+        'beta' }}
+    env:
+      KOZMO_APP_ENV: ${{ vars.KOZMO_APP_ENV }}
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_TOKEN }}
+
+      - name: Install kubectl
+        run: |
+          sudo snap install kubectl --classic
+
+      - name: Setup kubectl
+        run: |
+          doctl kubernetes cluster kubeconfig save $DO_CLUSTER
+          kubectl version
+
+      - uses: actions/checkout@v4
+        with:
+          repository: kozmoai/k8s-application-do
+          token: ${{ secrets.API_GITHUB_TOKEN }}
+          path: k8s-application-do
+
+      - name: Deploy to Kubernetes
+        run: |
+          cd k8s-application-do/namespace-$KOZMO_APP_ENV
+          kubectl delete pod -n $KOZMO_APP_ENV -l repo=kozmo-builder-backend
+          kubectl delete pod -n $KOZMO_APP_ENV -l repo=kozmo-builder-backend-ws
+          kubectl delete pod -n $KOZMO_APP_ENV -l repo=kozmo-builder-backend-internal
+          kubectl apply -f ./kozmo-builder-backend/ -n $KOZMO_APP_ENV
+          kubectl apply -f ./kozmo-builder-backend-ws/ -n $KOZMO_APP_ENV
+          kubectl apply -f ./kozmo-builder-backend-internal/ -n $KOZMO_APP_ENV
